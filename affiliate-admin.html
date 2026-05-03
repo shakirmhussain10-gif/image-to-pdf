@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affiliate Manager — Image Tools</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── PASSWORD LOCK SCREEN ── */
+    #lockScreen {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #09090f;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+    #lockScreen::before {
+      content: '';
+      position: absolute; top: -180px; left: -160px;
+      width: 580px; height: 580px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,107,255,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .lock-card {
+      background: #161624;
+      border: 1px solid #252538;
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 380px; width: 100%;
+      text-align: center;
+      position: relative; z-index: 1;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      animation: lockIn .5s cubic-bezier(.34,1.3,.64,1) both;
+    }
+    @keyframes lockIn { from { opacity:0; transform:scale(.9) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .lock-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: linear-gradient(135deg, #7c6bff, #b89bff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; margin: 0 auto 24px;
+      box-shadow: 0 4px 24px rgba(124,107,255,.4);
+    }
+    .lock-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px; font-weight: 800;
+      color: #eaeaf8; margin-bottom: 6px;
+    }
+    .lock-sub {
+      color: #5c5c7a; font-size: 14px; margin-bottom: 32px;
+    }
+    .lock-input-wrap { position: relative; margin-bottom: 16px; }
+    #lockPass {
+      width: 100%;
+      background: #111119;
+      border: 1.5px solid #252538;
+      color: #eaeaf8;
+      padding: 14px 46px 14px 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'DM Mono', monospace;
+      outline: none;
+      transition: border-color .2s;
+      letter-spacing: .05em;
+    }
+    #lockPass:focus { border-color: #7c6bff; }
+    #lockPass.error { border-color: #ff6b6b; animation: shake .3s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+    .lock-eye {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: #5c5c7a; font-size: 16px; padding: 4px;
+      transition: color .2s;
+    }
+    .lock-eye:hover { color: #9494b8; }
+    .lock-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #7c6bff, #b89bff);
+      color: #fff; border: none;
+      padding: 15px; border-radius: 12px;
+      font-size: 15px; font-weight: 800;
+      font-family: 'Syne', sans-serif;
+      cursor: pointer; transition: all .2s;
+      box-shadow: 0 4px 20px rgba(124,107,255,.35);
+    }
+    .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,107,255,.45); }
+    .lock-btn:active { transform: translateY(0); }
+    .lock-error {
+      color: #ff7f7f; font-size: 13px;
+      margin-top: 12px;
+      min-height: 18px;
+      font-family: 'DM Mono', monospace;
+    }
+    .lock-attempts {
+      color: #5c5c7a; font-size: 11px;
+      margin-top: 20px;
+      font-family: 'DM Mono', monospace;
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, set, push, get, remove, onValue, update }
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyArsNiaHlvpkC1d1JOPbenY_o3jkEdALyY",
+      authDomain: "pdf-to-image-b28c3.firebaseapp.com",
+      databaseURL: "https://pdf-to-image-b28c3-default-rtdb.firebaseio.com",
+      projectId: "pdf-to-image-b28c3",
+      storageBucket: "pdf-to-image-b28c3.firebasestorage.app",
+      messagingSenderId: "81974033050",
+      appId: "1:81974033050:web:f4c0f9824ba5609cdabd23",
+      measurementId: "G-4BG7ZBJC4R"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    // ── helpers ──────────────────────────────────────────────
+    const adsRef = () => ref(db, 'affiliate_ads');
+    const adRef  = id => ref(db, 'affiliate_ads/' + id);
+
+    // ── expose to global so non-module UI code can call them ─
+    window._fb = { ref, set, push, get, remove, onValue, update, db, adsRef, adRef };
+    window._fbReady = true;
+    document.dispatchEvent(new Event('fbReady'));
+  </script>
+
+  <style>
+    :root{
+      --bg:#09090f; --surface:#111119; --card:#161624; --card2:#1c1c2e;
+      --border:#252538; --accent:#7c6bff; --a2:#ff6b6b; --a3:#43e97b;
+      --gold:#f7c59f; --text:#eaeaf8; --muted:#5c5c7a; --muted2:#9494b8;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+    /* grid bg */
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:linear-gradient(rgba(124,107,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(124,107,255,.035) 1px,transparent 1px);
+      background-size:44px 44px;
+    }
+    /* glow blobs */
+    body::after{
+      content:'';position:fixed;top:-160px;right:-100px;
+      width:520px;height:520px;border-radius:50%;
+      background:radial-gradient(circle,rgba(124,107,255,.1) 0%,transparent 70%);
+      pointer-events:none;z-index:0;
+    }
+
+    .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:44px 20px 100px;}
+
+    /* ── header ── */
+    .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:14px;}
+    .brand{display:flex;align-items:center;gap:12px;}
+    .brand-ico{
+      width:46px;height:46px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),#b89bff);
+      display:flex;align-items:center;justify-content:center;font-size:22px;
+      box-shadow:0 4px 20px rgba(124,107,255,.35);
+    }
+    .brand-name{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;}
+    .brand-name span{color:var(--accent);}
+    .back{
+      display:flex;align-items:center;gap:7px;
+      background:var(--card);border:1px solid var(--border);
+      color:var(--muted2);text-decoration:none;padding:9px 18px;
+      border-radius:10px;font-size:13px;font-weight:500;transition:all .2s;
+    }
+    .back:hover{color:var(--text);border-color:var(--accent);}
+
+    /* ── connection banner ── */
+    .conn-banner{
+      display:flex;align-items:center;gap:12px;
+      padding:14px 20px;border-radius:14px;margin-bottom:28px;
+      font-size:14px;font-weight:500;
+    }
+    .conn-banner.connecting{background:rgba(124,107,255,.1);border:1px solid rgba(124,107,255,.25);color:#b89bff;}
+    .conn-banner.connected{background:rgba(67,233,123,.08);border:1px solid rgba(67,233,123,.25);color:var(--a3);}
+    .conn-banner.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:#ff9f9f;}
+    .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+    .dot.pulse{animation:pulse 1.4s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+    .dot.green{background:var(--a3);}
+    .dot.purple{background:var(--accent);}
+    .dot.red{background:#ff6b6b;}
+
+    /* ── stats ── */
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px;margin-bottom:32px;}
+    .stat{
+      background:var(--card);border:1px solid var(--border);border-radius:18px;
+      padding:22px 20px;transition:border-color .3s;
+    }
+    .stat:hover{border-color:rgba(124,107,255,.35);}
+    .stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+    .stat-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;}
+    .v-pu{color:var(--accent);}
+    .v-gr{color:var(--a3);}
+    .v-go{color:#f7c948;}
+    .v-re{color:#ff9f9f;}
+
+    /* ── cards ── */
+    .card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:22px;padding:30px;margin-bottom:22px;
+    }
+    .card-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:5px;}
+    .card-sub{color:var(--muted2);font-size:13px;margin-bottom:22px;line-height:1.6;}
+
+    /* ── form ── */
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:580px){.grid2{grid-template-columns:1fr;}}
+    .full{grid-column:1/-1;}
+    .fld{display:flex;flex-direction:column;gap:7px;}
+    .fld label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+    .fld input,.fld select{
+      background:var(--surface);border:1.5px solid var(--border);color:var(--text);
+      padding:11px 14px;border-radius:11px;font-size:14px;font-family:'DM Sans',sans-serif;
+      outline:none;transition:border-color .2s,box-shadow .2s;
+    }
+    .fld input:focus,.fld select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,107,255,.12);}
+    .fld select option{background:var(--surface);}
+
+    /* ── toggle ── */
+    .tog-wrap{display:flex;align-items:center;gap:10px;margin-top:10px;}
+    .toggle{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .track{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:background .25s;}
+    .toggle input:checked~.track{background:var(--a3);}
+    .thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+    .toggle input:checked~.thumb{transform:translateX(18px);}
+    .tog-lbl{font-size:13px;color:var(--muted2);}
+
+    /* ── buttons ── */
+    .btn-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+    .btn{padding:11px 22px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:7px;}
+    .btn-p{background:linear-gradient(135deg,var(--accent),#a78bff);color:#fff;box-shadow:0 3px 14px rgba(124,107,255,.3);}
+    .btn-p:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,107,255,.4);}
+    .btn-s{background:var(--surface);border:1.5px solid var(--border);color:var(--text);}
+    .btn-s:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+    .btn-d{background:rgba(255,107,107,.1);border:1.5px solid rgba(255,107,107,.25);color:#ff7f7f;}
+    .btn-d:hover:not(:disabled){background:rgba(255,107,107,.2);}
+    .btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+
+    /* ── spinner ── */
+    .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;}
+    @keyframes sp{to{transform:rotate(360deg)}}
+
+    /* ── live preview ── */
+    .prev-strip{
+      border-radius:14px;padding:15px 20px;
+      display:flex;align-items:center;gap:15px;flex-wrap:wrap;font-size:14px;
+      transition:all .3s;
+    }
+    .ps-cool{background:linear-gradient(90deg,#6c63ff,#a78bff);color:#fff;}
+    .ps-hot{background:linear-gradient(90deg,#ff416c,#ff9800);color:#fff;}
+    .ps-gold{background:linear-gradient(90deg,#f7c948,#ff9800);color:#1a1200;}
+    .ps-dark{background:var(--card2);border:1px solid var(--border);}
+    .prev-cta{padding:7px 16px;border-radius:8px;font-weight:700;font-size:12px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.2);white-space:nowrap;}
+
+    /* ── ads list ── */
+    .ads-list{display:flex;flex-direction:column;gap:12px;}
+    .ad-item{
+      background:var(--card2);border:1px solid var(--border);border-radius:16px;
+      padding:16px 18px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:center;
+      transition:border-color .2s;
+    }
+    .ad-item:hover{border-color:rgba(124,107,255,.3);}
+    .ad-ico{width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#b89bff);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+    .ad-name{font-weight:700;font-size:15px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ad-url{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ad-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+    .tag{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+    .t-ban{background:rgba(124,107,255,.15);color:#b89bff;}
+    .t-dl{background:rgba(255,107,107,.15);color:#ff9f9f;}
+    .t-both{background:rgba(247,201,72,.12);color:#f7c948;}
+    .t-on{background:rgba(67,233,123,.1);color:var(--a3);}
+    .t-off{background:rgba(255,255,255,.05);color:var(--muted);}
+    .t-pri{background:rgba(255,255,255,.05);color:var(--muted);}
+    .ad-acts{display:flex;gap:7px;flex-shrink:0;}
+    .ibtn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;}
+    .ibtn:hover{border-color:var(--accent);background:rgba(124,107,255,.1);}
+    .ibtn.del:hover{border-color:#ff6b6b;background:rgba(255,107,107,.1);}
+
+    /* ── empty ── */
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-ico{font-size:52px;margin-bottom:16px;}
+    .empty p{font-size:14px;}
+
+    /* ── toast ── */
+    #toast{
+      position:fixed;bottom:28px;right:28px;z-index:9999;
+      padding:13px 22px;border-radius:12px;font-weight:700;font-size:14px;
+      display:flex;align-items:center;gap:8px;
+      transform:translateY(90px);opacity:0;transition:all .35s cubic-bezier(.34,1.5,.64,1);
+      box-shadow:0 8px 30px rgba(0,0,0,.4);
+    }
+    #toast.show{transform:translateY(0);opacity:1;}
+    #toast.ok{background:var(--a3);color:#061208;}
+    #toast.err{background:#ff6b6b;color:#fff;}
+    #toast.info{background:var(--accent);color:#fff;}
+  </style>
+</head>
+<body>
+
+<!-- ── PASSWORD LOCK SCREEN ── -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">Admin Access</div>
+    <div class="lock-sub">Affiliate Manager — Authorized Only</div>
+    <div class="lock-input-wrap">
+      <input type="password" id="lockPass" placeholder="Enter password…" autocomplete="off"
+        onkeydown="if(event.key==='Enter') checkLock()">
+      <button class="lock-eye" id="lockEye" onclick="togglePassVis()" title="Show/Hide">👁️</button>
+    </div>
+    <button class="lock-btn" onclick="checkLock()">🔓 Unlock Manager</button>
+    <div class="lock-error" id="lockErr"></div>
+    <div class="lock-attempts" id="lockAttempts"></div>
+  </div>
+</div>
+
+<script>
+// ── PASSWORD PROTECTION ──────────────────────────────────
+(function() {
+  const PASS = 'shakirmhussain01@';
+  const SESSION_KEY = 'aff_admin_auth';
+  let attempts = 0;
+  const MAX_ATTEMPTS = 5;
+
+  // Already authenticated this session?
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('lockScreen').style.display = 'none';
+  }
+
+  window.togglePassVis = function() {
+    const inp = document.getElementById('lockPass');
+    const eye = document.getElementById('lockEye');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      eye.textContent = '🙈';
+    } else {
+      inp.type = 'password';
+      eye.textContent = '👁️';
+    }
+  };
+
+  window.checkLock = function() {
+    const inp = document.getElementById('lockPass');
+    const errEl = document.getElementById('lockErr');
+    const attEl = document.getElementById('lockAttempts');
+
+    if (attempts >= MAX_ATTEMPTS) {
+      errEl.textContent = '⚠️ Too many attempts. Reload page to try again.';
+      inp.disabled = true;
+      return;
+    }
+
+    if (inp.value === PASS) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      document.getElementById('lockScreen').style.display = 'none';
+      inp.value = '';
+    } else {
+      attempts++;
+      inp.classList.add('error');
+      setTimeout(() => inp.classList.remove('error'), 400);
+      const left = MAX_ATTEMPTS - attempts;
+      errEl.textContent = '❌ Galat password. Dobara koshish karein.';
+      if (left <= 2) {
+        attEl.textContent = `${left} attempt(s) remaining`;
+      }
+      inp.value = '';
+      inp.focus();
+    }
+  };
+})();
+</script>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="brand">
+      <div class="brand-ico">🎯</div>
+      <div class="brand-name">Affiliate <span>Manager</span></div>
+    </div>
+    <a href="index.html" class="back">← Back to App</a>
+  </div>
+
+  <!-- Connection Status -->
+  <div class="conn-banner connecting" id="connBanner">
+    <div class="dot purple pulse"></div>
+    <span>Firebase se connect ho raha hai…</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-lbl">Total Ads</div><div class="stat-val v-pu" id="sTotal">—</div></div>
+    <div class="stat"><div class="stat-lbl">Active Live</div><div class="stat-val v-gr" id="sActive">—</div></div>
+    <div class="stat"><div class="stat-lbl">Banner Ads</div><div class="stat-val v-go" id="sBanner">—</div></div>
+    <div class="stat"><div class="stat-lbl">Download Ads</div><div class="stat-val v-re" id="sDl">—</div></div>
+  </div>
+
+  <!-- Add / Edit Form -->
+  <div class="card">
+    <div class="card-title" id="formTitle">➕ New Affiliate Ad</div>
+    <div class="card-sub">Ad add karo — Firebase mein save hoga aur <strong>sab users ko turant</strong> dikhega!</div>
+    <input type="hidden" id="fId">
+    <div class="grid2">
+      <div class="fld"><label>Ad Title *</label><input id="fTitle" placeholder="e.g. Try DoSHub — Learn Smarter"></div>
+      <div class="fld"><label>Emoji / Icon</label><input id="fEmoji" placeholder="🚀" maxlength="4"></div>
+      <div class="fld full"><label>Affiliate URL *</label><input id="fUrl" type="url" placeholder="https://your-affiliate-link.com"></div>
+      <div class="fld"><label>Short Description</label><input id="fDesc" placeholder="The best platform for learners"></div>
+      <div class="fld"><label>CTA Button Text</label><input id="fCta" placeholder="Try Free Now →"></div>
+      <div class="fld">
+        <label>Show Position</label>
+        <select id="fPos">
+          <option value="both">✨ Both (Banner + Download popup)</option>
+          <option value="banner">📢 Top Banner only</option>
+          <option value="download">⬇️ Before Download only</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Color Theme</label>
+        <select id="fStyle">
+          <option value="cool">💜 Cool — Purple gradient</option>
+          <option value="hot">🔥 Hot — Red-Orange</option>
+          <option value="gold">⭐ Gold — Yellow-Orange</option>
+          <option value="dark">🖤 Dark — Minimal</option>
+        </select>
+      </div>
+      <div class="fld"><label>Priority (zyada = pehle dikhega)</label><input id="fPri" type="number" value="10" min="1" max="9999"></div>
+      <div class="fld">
+        <label>Status</label>
+        <div class="tog-wrap">
+          <label class="toggle"><input type="checkbox" id="fActive" checked><div class="track"></div><div class="thumb"></div></label>
+          <span class="tog-lbl">Ad is Live (users ko dikhega)</span>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p" id="saveBtn" onclick="saveAd()">💾 Save to Firebase</button>
+      <button class="btn btn-s" onclick="resetForm()">↺ Reset</button>
+      <button class="btn btn-s" onclick="loadSample()">✨ DoSHub Sample</button>
+    </div>
+  </div>
+
+  <!-- Live Preview -->
+  <div class="card">
+    <div class="card-title">👁️ Live Preview</div>
+    <div class="card-sub">Users ko banner bilkul aisa dikhega — real-time update hota hai</div>
+    <div id="prevStrip" class="prev-strip ps-cool">
+      <span id="pvEm" style="font-size:24px">🚀</span>
+      <div style="flex:1;min-width:0">
+        <strong id="pvTi">Ad Title Here</strong>
+        <div id="pvDe" style="font-size:12px;opacity:.85;margin-top:3px">Short description for users</div>
+      </div>
+      <div id="pvCt" class="prev-cta">Try Now →</div>
+    </div>
+  </div>
+
+  <!-- Ads List -->
+  <div class="card">
+    <div class="card-title">📋 All Ads</div>
+    <div class="card-sub">Firebase Realtime Database — changes <strong>instantly live</strong> hote hain har user ke liye globally 🌍</div>
+    <div class="ads-list" id="adsList">
+      <div class="empty"><div class="empty-ico">🔥</div><p>Firebase connect ho raha hai…</p></div>
+    </div>
+  </div>
+
+  <!-- Backup -->
+  <div class="card">
+    <div class="card-title">🔄 Backup / Import</div>
+    <div class="card-sub">JSON mein export karo ya purane ads import karo</div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="exportAds()">📤 Export JSON</button>
+      <button class="btn btn-s" onclick="document.getElementById('impEl').click()">📥 Import JSON</button>
+    </div>
+    <input type="file" id="impEl" accept=".json" style="display:none" onchange="importAds(this)">
+  </div>
+
+</div><!-- /wrap -->
+
+<div id="toast"></div>
+
+<script>
+// ── wait for Firebase module to load ─────────────────────
+let _fb, _db, _adsRef, _adRef;
+
+document.addEventListener('fbReady', () => {
+  _fb     = window._fb;
+  _db     = _fb.db;
+  _adsRef = _fb.adsRef;
+  _adRef  = _fb.adRef;
+  startListening();
+});
+
+// Fallback if module already loaded
+if (window._fbReady) {
+  _fb     = window._fb;
+  _db     = _fb.db;
+  _adsRef = _fb.adsRef;
+  _adRef  = _fb.adRef;
+  startListening();
+}
+
+// ── REALTIME LISTENER — updates instantly for everyone ────
+let allAds = [];
+
+function startListening() {
+  const banner = document.getElementById('connBanner');
+  banner.className = 'conn-banner connecting';
+  banner.innerHTML = '<div class="dot purple pulse"></div><span>Firebase se connect ho raha hai…</span>';
+
+  _fb.onValue(_adsRef(), (snapshot) => {
+    const raw = snapshot.val() || {};
+    allAds = Object.entries(raw).map(([id, d]) => ({ id, ...d }));
+    allAds.sort((a, b) => (b.priority || 10) - (a.priority || 10));
+
+    banner.className = 'conn-banner connected';
+    banner.innerHTML = '<div class="dot green"></div><span>🔥 Firebase connected — <strong>' + allAds.length + ' ads</strong> live — sab users ko real-time mil raha hai!</span>';
+
+    renderStats();
+    renderList();
+  }, (error) => {
+    banner.className = 'conn-banner error';
+    banner.innerHTML = '<div class="dot red"></div><span>✕ Firebase error: ' + error.message + '</span>';
+  });
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function renderStats() {
+  const active = allAds.filter(a => a.active);
+  document.getElementById('sTotal').textContent  = allAds.length;
+  document.getElementById('sActive').textContent = active.length;
+  document.getElementById('sBanner').textContent = active.filter(a => a.position === 'banner' || a.position === 'both').length;
+  document.getElementById('sDl').textContent     = active.filter(a => a.position === 'download' || a.position === 'both').length;
+}
+
+// ── RENDER LIST ───────────────────────────────────────────
+function renderList() {
+  const el = document.getElementById('adsList');
+  if (!allAds.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-ico">🎯</div><p>Koi ad nahi — upar se pehla ad add karo!</p></div>`;
+    return;
+  }
+  el.innerHTML = allAds.map(a => {
+    const pc = a.position === 'banner' ? 't-ban' : a.position === 'download' ? 't-dl' : 't-both';
+    const pl = a.position === 'banner' ? '📢 Banner' : a.position === 'download' ? '⬇️ Download' : '✨ Both';
+    const enc = encodeURIComponent(JSON.stringify(a));
+    return `
+    <div class="ad-item">
+      <div class="ad-ico">${a.emoji || '📢'}</div>
+      <div style="min-width:0">
+        <div class="ad-name">${a.title}</div>
+        <div class="ad-url">${a.url}</div>
+        <div class="ad-tags">
+          <span class="tag ${pc}">${pl}</span>
+          <span class="tag t-pri">P:${a.priority || 10}</span>
+          ${a.active
+            ? '<span class="tag t-on">● Live</span>'
+            : '<span class="tag t-off">○ Paused</span>'}
+        </div>
+      </div>
+      <div class="ad-acts">
+        <button class="ibtn" onclick="editAd(JSON.parse(decodeURIComponent('${enc}')))" title="Edit">✏️</button>
+        <button class="ibtn del" onclick="deleteAd('${a.id}')" title="Delete">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SAVE AD (Add or Update) ───────────────────────────────
+async function saveAd() {
+  const title = document.getElementById('fTitle').value.trim();
+  const url   = document.getElementById('fUrl').value.trim();
+  if (!title || !url) { showToast('⚠️ Title aur URL zaroori hain', 'err'); return; }
+
+  const ad = {
+    title,
+    url,
+    emoji    : document.getElementById('fEmoji').value.trim() || '📢',
+    desc     : document.getElementById('fDesc').value.trim(),
+    cta      : document.getElementById('fCta').value.trim() || 'Visit Now →',
+    position : document.getElementById('fPos').value,
+    style    : document.getElementById('fStyle').value,
+    priority : parseInt(document.getElementById('fPri').value) || 10,
+    active   : document.getElementById('fActive').checked,
+    updatedAt: Date.now()
+  };
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Saving…';
+
+  try {
+    const id = document.getElementById('fId').value;
+    if (id) {
+      // Update existing
+      await _fb.update(_adRef(id), ad);
+      showToast('✅ Ad updated — turant live sab ke liye!');
+    } else {
+      // New ad — push generates unique key
+      ad.createdAt = Date.now();
+      await _fb.push(_adsRef(), ad);
+      showToast('✅ Ad saved — ab har user ko dikhega! 🎉');
+    }
+    resetForm();
+  } catch(e) {
+    showToast('✕ Error: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '💾 Save to Firebase';
+  }
+}
+
+// ── EDIT ─────────────────────────────────────────────────
+function editAd(a) {
+  document.getElementById('fId').value     = a.id;
+  document.getElementById('fTitle').value  = a.title;
+  document.getElementById('fUrl').value    = a.url;
+  document.getElementById('fEmoji').value  = a.emoji || '';
+  document.getElementById('fDesc').value   = a.desc  || '';
+  document.getElementById('fCta').value    = a.cta   || '';
+  document.getElementById('fPos').value    = a.position || 'both';
+  document.getElementById('fStyle').value  = a.style || 'cool';
+  document.getElementById('fPri').value    = a.priority || 10;
+  document.getElementById('fActive').checked = !!a.active;
+  document.getElementById('formTitle').textContent = '✏️ Edit Ad';
+  updatePreview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── DELETE ────────────────────────────────────────────────
+async function deleteAd(id) {
+  if (!confirm('Yeh ad permanently delete ho jayega — confirm?')) return;
+  try {
+    await _fb.remove(_adRef(id));
+    showToast('🗑️ Ad deleted');
+  } catch(e) {
+    showToast('✕ ' + e.message, 'err');
+  }
+}
+
+// ── RESET FORM ────────────────────────────────────────────
+function resetForm() {
+  ['fId','fTitle','fUrl','fEmoji','fDesc','fCta'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('fPos').value   = 'both';
+  document.getElementById('fStyle').value = 'cool';
+  document.getElementById('fPri').value   = 10;
+  document.getElementById('fActive').checked = true;
+  document.getElementById('formTitle').textContent = '➕ New Affiliate Ad';
+  updatePreview();
+}
+
+// ── DOSHUB SAMPLE ─────────────────────────────────────────
+function loadSample() {
+  document.getElementById('fTitle').value  = 'Try DoSHub — Learn & Build Smarter';
+  document.getElementById('fUrl').value    = 'https://learn-doshub.vercel.app/index.html';
+  document.getElementById('fEmoji').value  = '🚀';
+  document.getElementById('fDesc').value   = 'The all-in-one learning & productivity platform — free to start!';
+  document.getElementById('fCta').value    = 'Explore DoSHub →';
+  document.getElementById('fPos').value    = 'both';
+  document.getElementById('fStyle').value  = 'cool';
+  document.getElementById('fPri').value    = 100;
+  document.getElementById('fActive').checked = true;
+  updatePreview();
+  showToast('✨ Sample loaded — Save dabao!', 'info');
+}
+
+// ── LIVE PREVIEW ──────────────────────────────────────────
+function updatePreview() {
+  document.getElementById('pvTi').textContent = document.getElementById('fTitle').value || 'Ad Title Here';
+  document.getElementById('pvDe').textContent = document.getElementById('fDesc').value  || 'Short description for users';
+  document.getElementById('pvCt').textContent = document.getElementById('fCta').value   || 'Try Now →';
+  document.getElementById('pvEm').textContent = document.getElementById('fEmoji').value || '🚀';
+  document.getElementById('prevStrip').className = 'prev-strip ps-' + (document.getElementById('fStyle').value || 'cool');
+}
+['fTitle','fDesc','fCta','fEmoji','fStyle'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+  document.getElementById(id).addEventListener('change', updatePreview);
+});
+
+// ── EXPORT / IMPORT ───────────────────────────────────────
+function exportAds() {
+  if (!allAds.length) { showToast('Koi ad nahi export karne ke liye', 'err'); return; }
+  const blob = new Blob([JSON.stringify(allAds, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'affiliate-ads-backup.json';
+  a.click();
+  showToast('📤 Exported!');
+}
+
+function importAds(inp) {
+  const file = inp.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const rows = JSON.parse(e.target.result);
+      if (!Array.isArray(rows)) throw new Error('Invalid JSON format');
+      let count = 0;
+      for (const r of rows) {
+        if (!r.title || !r.url) continue;
+        const ad = {
+          title: r.title, url: r.url, emoji: r.emoji || '📢',
+          desc: r.desc || '', cta: r.cta || 'Visit Now →',
+          position: r.position || 'both', style: r.style || 'cool',
+          priority: r.priority || 10, active: r.active !== false,
+          createdAt: Date.now()
+        };
+        await _fb.push(_adsRef(), ad);
+        count++;
+      }
+      showToast(`📥 ${count} ads imported!`);
+    } catch(err) {
+      showToast('✕ Import error: ' + err.message, 'err');
+    }
+  };
+  reader.readAsText(file);
+  inp.value = '';
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;  // reset + show
+  t.id = 'toast';
+  t.classList.add('show', type);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.classList.remove('show');
+  }, 3400);
+}
+</script>
+</body>
+</html>

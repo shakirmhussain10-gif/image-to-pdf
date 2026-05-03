@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free Image Tools — Convert to PDF, compress, resize, convert formats and Base64. 100% private, no upload needed.">
+  <meta name="keywords" content="image to pdf, compress images, resize images, format converter, base64 encoder, free online">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Image Tools Pro — PDF · Compress · Resize · Convert · Base64">
+  <meta property="og:description" content="5 powerful free image tools — all in your browser, 100% private.">
+  <meta property="og:type" content="website">
+  <title>Image Tools Pro — PDF · Compress · Resize · Convert · Base64</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Firebase — load ads from Realtime Database for ALL users -->
+  <script type="module">
+    import { initializeApp }   from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue }
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey           : "AIzaSyArsNiaHlvpkC1d1JOPbenY_o3jkEdALyY",
+      authDomain       : "pdf-to-image-b28c3.firebaseapp.com",
+      databaseURL      : "https://pdf-to-image-b28c3-default-rtdb.firebaseio.com",
+      projectId        : "pdf-to-image-b28c3",
+      storageBucket    : "pdf-to-image-b28c3.firebasestorage.app",
+      messagingSenderId: "81974033050",
+      appId            : "1:81974033050:web:f4c0f9824ba5609cdabd23",
+      measurementId    : "G-4BG7ZBJC4R"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    // Listen for live changes — banner & modal update instantly when you save in admin
+    onValue(ref(db, 'affiliate_ads'), (snapshot) => {
+      const raw  = snapshot.val() || {};
+      const ads  = Object.entries(raw)
+        .map(([id, d]) => ({ id, ...d }))
+        .filter(a => a.active)
+        .sort((a, b) => (b.priority || 10) - (a.priority || 10));
+      window._liveAds = ads;
+      renderBanner(ads);
+    });
+  </script>
+
+  <style>
+    :root{
+      --bg:#09090f; --surface:#111119; --card:#161624; --card2:#1c1c2e;
+      --border:#252538; --accent:#7c6bff; --a2:#ff6b6b; --a3:#43e97b;
+      --gold:#f7c948; --text:#eaeaf8; --muted:#5c5c7a; --muted2:#9494b8;
+      --glow:rgba(124,107,255,.28);
+    }
+    html[data-theme="light"]{
+      --bg:#f0f0fa; --surface:#ffffff; --card:#ffffff; --card2:#e8e8f5;
+      --border:#c8c8e0; --accent:#5a4fcf; --a2:#e03c3c; --a3:#1e9e52;
+      --gold:#d4a000; --text:#12122a; --muted:#6060a0; --muted2:#444468;
+      --glow:rgba(90,79,207,.18);
+    }
+    html[data-theme="light"] body{background:var(--bg);color:var(--text);}
+    html[data-theme="light"] body::before{background:radial-gradient(circle,rgba(90,79,207,.07) 0%,transparent 70%);}
+    html[data-theme="light"] body::after{background:radial-gradient(circle,rgba(30,158,82,.05) 0%,transparent 70%);}
+    html[data-theme="light"] nav{background:rgba(240,240,250,.92);}
+    html[data-theme="light"] .tabs-bar{background:rgba(240,240,250,.95);}
+    html[data-theme="light"] footer{background:#e4e4f5;}
+    html[data-theme="light"] .tool-card{background:var(--card);border-color:var(--border);}
+    html[data-theme="light"] .opts{background:#f5f5ff;border-color:var(--border);}
+    html[data-theme="light"] .opt select,html[data-theme="light"] .opt input{background:#fff;border-color:var(--border);color:var(--text);}
+    html[data-theme="light"] .drop{background:#f8f8ff;border-color:var(--border);}
+    html[data-theme="light"] .drop:hover,html[data-theme="light"] .drop.over{background:rgba(90,79,207,.04);}
+    html[data-theme="light"] .flist{border-color:var(--border);}
+    html[data-theme="light"] .frow{border-bottom-color:var(--border);}
+    html[data-theme="light"] .feat-card{background:#fff;border-color:var(--border);}
+    html[data-theme="light"] .b64-ta{background:#f8f8ff;border-color:var(--border);color:var(--text);}
+    html[data-theme="light"] .copy-btn{background:#f0f0f8;border-color:var(--border);color:var(--muted2);}
+    html[data-theme="light"] .m-card{background:#fff;border-color:var(--border);}
+    html[data-theme="light"] .hero-badge{background:rgba(90,79,207,.08);border-color:rgba(90,79,207,.2);}
+    html[data-theme="light"] .tab-btn{color:var(--muted2);}
+    html[data-theme="light"] .tab-btn:hover{background:var(--card2);}
+    html[data-theme="light"] .tab-btn.active{background:rgba(90,79,207,.1);color:var(--accent);border-color:rgba(90,79,207,.3);}
+    html[data-theme="light"] .nav-links a{color:var(--muted2);}
+    html[data-theme="light"] .nav-links a:hover{color:var(--text);background:var(--card2);}
+    html[data-theme="light"] .pill{background:#ebebf8;border-color:var(--border);color:var(--muted2);}
+    html[data-theme="light"] .theme-toggle{background:#fff;border-color:var(--border);color:var(--text);}
+    html[data-theme="light"] .hamburger{border-color:var(--border);color:var(--text);}
+    html[data-theme="light"] .fbar{background:rgba(90,79,207,.05);border-color:rgba(90,79,207,.15);}
+    html[data-theme="light"] #dlModal{background:rgba(0,0,0,.6);}
+    html[data-theme="light"] .foot-col a{color:var(--muted2);}
+    html[data-theme="light"] .foot-col a:hover{color:var(--text);}
+    html[data-theme="light"] .foot-bottom{border-color:var(--border);color:var(--muted);}
+    html[data-theme="light"] .foot-brand p{color:var(--muted2);}
+    html[data-theme="light"] .logo-name{color:var(--text);}
+    html[data-theme="light"] .tc-title{color:var(--text);}
+    html[data-theme="light"] .fbar-info{color:var(--text);}
+    html[data-theme="light"] .fbar-btn{background:#fff;border-color:var(--border);color:var(--muted2);}
+    .theme-toggle{
+      background:var(--card);border:1px solid var(--border);
+      color:var(--text);width:38px;height:38px;border-radius:10px;
+      cursor:pointer;font-size:17px;display:flex;align-items:center;
+      justify-content:center;transition:all .2s;flex-shrink:0;
+    }
+    .theme-toggle:hover{border-color:var(--accent);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+    /* ambient */
+    body::before{content:'';position:fixed;top:-180px;left:-160px;width:580px;height:580px;border-radius:50%;background:radial-gradient(circle,rgba(124,107,255,.1) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    body::after{content:'';position:fixed;bottom:-150px;right:-80px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(67,233,123,.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1;}
+
+    /* ── NAV ── */
+    nav{
+      position:sticky;top:0;z-index:200;
+      background:rgba(9,9,15,.88);backdrop-filter:blur(22px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 20px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);}
+    .logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#b89bff);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 12px var(--glow);}
+    .logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;}
+    .logo-name em{color:var(--accent);font-style:normal;}
+    .nav-links{display:flex;gap:2px;list-style:none;}
+    .nav-links a{padding:8px 13px;border-radius:8px;color:var(--muted2);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;}
+    .nav-links a:hover{background:var(--card);color:var(--text);}
+    .nav-admin{
+      display:flex;align-items:center;gap:7px;
+      background:rgba(124,107,255,.1);border:1px solid rgba(124,107,255,.28);
+      color:var(--accent);padding:8px 16px;border-radius:10px;
+      text-decoration:none;font-size:13px;font-weight:700;transition:all .2s;
+    }
+    .nav-admin:hover{background:rgba(124,107,255,.2);}
+    .hamburger{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:18px;}
+
+    /* ── AFFILIATE BANNER ── */
+    #affBanner{position:relative;z-index:150;}
+    .aff-strip{
+      display:flex;align-items:center;justify-content:center;
+      gap:16px;padding:13px 20px;flex-wrap:wrap;font-size:14px;
+      animation:slideDown .4s cubic-bezier(.34,1.4,.64,1);
+    }
+    @keyframes slideDown{from{transform:translateY(-110%);opacity:0}to{transform:translateY(0);opacity:1}}
+    .aff-strip.cool{background:linear-gradient(90deg,#5a4fcf,#9b7dff);color:#fff;}
+    .aff-strip.hot{background:linear-gradient(90deg,#d63b5c,#f07020);color:#fff;}
+    .aff-strip.gold{background:linear-gradient(90deg,#e8b830,#e07010);color:#1a1000;}
+    .aff-strip.dark{background:var(--card2);border-bottom:1px solid var(--border);}
+    .aff-strip-text strong{display:block;font-weight:700;font-size:15px;}
+    .aff-strip-text span{font-size:12px;opacity:.85;}
+    .aff-cta{
+      padding:8px 18px;border-radius:9px;font-weight:700;font-size:13px;
+      text-decoration:none;white-space:nowrap;
+      background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.25);
+      transition:all .2s;
+    }
+    .aff-cta:hover{background:rgba(0,0,0,.35);}
+    .aff-close{
+      background:none;border:none;cursor:pointer;opacity:.55;
+      font-size:18px;padding:0 4px;line-height:1;transition:opacity .2s;
+    }
+    .aff-close:hover{opacity:1;}
+
+    /* ── HERO ── */
+    .hero{text-align:center;padding:76px 20px 52px;}
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(124,107,255,.1);border:1px solid rgba(124,107,255,.25);
+      color:var(--accent);padding:6px 16px;border-radius:100px;
+      font-size:13px;font-weight:600;margin-bottom:26px;
+      animation:fadeUp .6s ease both;
+    }
+    .hero h1{
+      font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,66px);
+      font-weight:800;line-height:1.08;margin-bottom:22px;
+      animation:fadeUp .6s .1s ease both;
+    }
+    .hero h1 .hl{
+      background:linear-gradient(135deg,var(--accent),#c0a0ff);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero p{font-size:17px;color:var(--muted2);max-width:520px;margin:0 auto 38px;line-height:1.75;animation:fadeUp .6s .2s ease both;}
+    .hero-pills{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;animation:fadeUp .6s .3s ease both;}
+    .pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);padding:8px 16px;border-radius:100px;font-size:13px;color:var(--muted2);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── TABS ── */
+    .tabs-bar{
+      position:sticky;top:64px;z-index:190;
+      background:rgba(9,9,15,.9);backdrop-filter:blur(22px);
+      border-bottom:1px solid var(--border);
+    }
+    .tabs-inner{max-width:1100px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:12px 20px;scrollbar-width:none;}
+    .tabs-inner::-webkit-scrollbar{display:none;}
+    .tab-btn{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 18px;border-radius:10px;border:1.5px solid transparent;
+      cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;
+      transition:all .2s;background:none;color:var(--muted2);font-family:'DM Sans',sans-serif;
+    }
+    .tab-btn:hover{background:var(--card);color:var(--text);}
+    .tab-btn.active{
+      background:rgba(124,107,255,.14);color:var(--accent);
+      border-color:rgba(124,107,255,.35);
+    }
+
+    /* ── TOOL SECTIONS ── */
+    main{padding:40px 0 100px;}
+    .tool-section{display:none;}
+    .tool-section.active{display:block;animation:fadeUp .3s ease;}
+
+    /* ── TOOL CARD ── */
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;margin-bottom:24px;}
+    .tc-head{padding:28px 32px 0;}
+    .tc-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:5px;}
+    .tc-desc{color:var(--muted2);font-size:14px;line-height:1.6;}
+    .tc-body{padding:24px 32px 32px;}
+
+    /* ── OPTIONS ── */
+    .opts{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
+      gap:14px;margin-bottom:22px;
+      background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);
+    }
+    .opt{display:flex;flex-direction:column;gap:6px;}
+    .opt label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+    .opt select,.opt input{
+      background:var(--card2);border:1.5px solid var(--border);color:var(--text);
+      padding:10px 12px;border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;
+      outline:none;transition:border-color .2s;
+    }
+    .opt select:focus,.opt input:focus{border-color:var(--accent);}
+    .opt select option{background:var(--surface);}
+    .rv{font-size:12px;color:var(--accent);font-weight:700;font-family:'DM Mono',monospace;}
+
+    /* ── DROP ZONE ── */
+    .drop{
+      border:2px dashed var(--border);border-radius:16px;
+      padding:52px 24px;text-align:center;cursor:pointer;
+      transition:all .3s;background:var(--surface);
+    }
+    .drop:hover,.drop.over{border-color:var(--accent);background:rgba(124,107,255,.05);}
+    .drop-ico{font-size:46px;margin-bottom:14px;display:block;}
+    .drop-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+    .drop-sub{color:var(--muted2);font-size:14px;margin-bottom:16px;}
+    .drop-btn{
+      display:inline-flex;align-items:center;gap:7px;
+      background:rgba(124,107,255,.13);border:1.5px solid rgba(124,107,255,.32);
+      color:var(--accent);padding:10px 22px;border-radius:10px;
+      font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;
+    }
+    .drop-btn:hover{background:rgba(124,107,255,.24);}
+    .drop-fmt{font-size:12px;color:var(--muted);margin-top:12px;font-family:'DM Mono',monospace;}
+
+    /* ── FILE BAR ── */
+    .fbar{
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(124,107,255,.07);border:1px solid rgba(124,107,255,.2);
+      border-radius:12px;padding:12px 18px;margin:14px 0 0;flex-wrap:wrap;gap:10px;
+    }
+    .fbar-info{font-size:14px;}
+    .fbar-info strong{color:var(--accent);}
+    .fbar-btn{
+      background:none;border:1px solid var(--border);color:var(--muted2);
+      padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;
+      font-family:'DM Sans',sans-serif;transition:all .2s;
+    }
+    .fbar-btn:hover{border-color:var(--a2);color:var(--a2);}
+    .flist{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;margin-top:8px;}
+    .flist::-webkit-scrollbar{width:4px;}
+    .flist::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+    .frow{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;font-size:13px;border-bottom:1px solid var(--border);gap:8px;}
+    .frow:last-child{border-bottom:none;}
+    .frow-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);}
+    .frow-sz{color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;flex-shrink:0;}
+    .frm{background:rgba(255,107,107,.1);border:none;color:#ff7f7f;padding:3px 10px;border-radius:6px;cursor:pointer;font-size:12px;}
+    .frm:hover{background:rgba(255,107,107,.2);}
+
+    /* ── RUN BUTTON ── */
+    .run-btn{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      width:100%;padding:16px;border-radius:14px;border:none;
+      background:linear-gradient(135deg,var(--accent),#b89bff);
+      color:#fff;font-size:16px;font-weight:800;cursor:pointer;
+      font-family:'Syne',sans-serif;transition:all .25s;margin-top:20px;
+      box-shadow:0 4px 22px var(--glow);
+    }
+    .run-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px var(--glow);}
+    .run-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+    /* ── PROGRESS ── */
+    .prog{margin-top:18px;display:none;}
+    .prog.show{display:block;}
+    .prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#b89bff);width:0%;transition:width .2s;border-radius:3px;}
+    .prog-lbl{font-size:12px;color:var(--muted2);margin-top:8px;font-family:'DM Mono',monospace;}
+
+    /* ── RESULTS ── */
+    .res{margin-top:14px;}
+    .res-row{
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(67,233,123,.05);border:1px solid rgba(67,233,123,.18);
+      border-radius:12px;padding:13px 17px;margin-bottom:7px;gap:12px;
+    }
+    .res-info{flex:1;min-width:0;}
+    .res-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .res-meta{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:3px;}
+    .dl-btn{
+      background:var(--a3);color:#061208;padding:8px 18px;
+      border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;
+      white-space:nowrap;transition:all .2s;flex-shrink:0;
+    }
+    .dl-btn:hover{background:#38d06b;}
+
+    /* ── FEATURES ── */
+    .feat-sec{padding:64px 0;}
+    .feat-title{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;text-align:center;margin-bottom:8px;}
+    .feat-sub{color:var(--muted2);text-align:center;margin-bottom:48px;font-size:15px;}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+    .feat-card{
+      background:var(--card);border:1px solid var(--border);border-radius:22px;
+      padding:28px;transition:all .3s;
+    }
+    .feat-card:hover{border-color:rgba(124,107,255,.38);transform:translateY(-5px);}
+    .feat-ico{font-size:34px;margin-bottom:14px;}
+    .feat-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:8px;}
+    .feat-desc{color:var(--muted2);font-size:14px;line-height:1.65;}
+
+    /* ── BASE64 ── */
+    .b64-out{display:none;margin-top:18px;}
+    .b64-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .b64-head strong{font-size:14px;color:var(--muted2);}
+    .copy-btn{
+      display:flex;align-items:center;gap:6px;
+      background:var(--surface);border:1px solid var(--border);color:var(--muted2);
+      padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;
+      font-family:'DM Sans',sans-serif;transition:all .2s;
+    }
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .b64-ta{
+      width:100%;height:155px;background:var(--surface);border:1.5px solid var(--border);
+      color:var(--text);padding:14px;border-radius:12px;
+      font-family:'DM Mono',monospace;font-size:12px;resize:vertical;outline:none;
+    }
+    .b64-meta{font-size:11px;color:var(--muted);margin-top:5px;font-family:'DM Mono',monospace;}
+    .copy-msg{color:var(--a3);font-size:13px;display:none;margin-top:5px;}
+
+    /* ── FOOTER ── */
+    footer{background:var(--surface);border-top:1px solid var(--border);padding:52px 20px;margin-top:40px;}
+    .foot-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;}
+    .foot-brand p{color:var(--muted2);font-size:14px;line-height:1.75;margin-top:12px;}
+    .foot-col h5{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700;margin-bottom:16px;}
+    .foot-col a{display:block;color:var(--muted2);text-decoration:none;font-size:14px;margin-bottom:9px;transition:color .2s;}
+    .foot-col a:hover{color:var(--text);}
+    .foot-bottom{max-width:1100px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);}
+    .foot-bottom a{color:var(--muted);text-decoration:none;}
+    .foot-bottom a:hover{color:var(--text);}
+
+    /* ── DOWNLOAD MODAL (Affiliate) ── */
+    #dlModal{
+      position:fixed;inset:0;z-index:9999;
+      background:rgba(0,0,0,.82);backdrop-filter:blur(12px);
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    #dlModal.open{opacity:1;pointer-events:all;}
+    .m-card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:24px;padding:44px 36px;max-width:420px;width:100%;
+      text-align:center;position:relative;
+      transform:translateY(24px) scale(.97);transition:all .35s cubic-bezier(.34,1.3,.64,1);
+    }
+    #dlModal.open .m-card{transform:translateY(0) scale(1);}
+    .m-badge{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:18px;}
+    .m-emoji{font-size:52px;margin-bottom:16px;}
+    .m-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:10px;}
+    .m-desc{color:var(--muted2);font-size:14px;line-height:1.65;margin-bottom:26px;}
+    .m-cta{
+      display:block;width:100%;
+      background:linear-gradient(135deg,var(--accent),#b89bff);
+      color:#fff;padding:15px;border-radius:13px;
+      font-weight:800;font-size:15px;text-decoration:none;
+      font-family:'Syne',sans-serif;transition:all .2s;
+      box-shadow:0 4px 22px var(--glow);
+    }
+    .m-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow);}
+    .m-skip{
+      display:block;margin-top:14px;color:var(--muted);font-size:13px;
+      cursor:pointer;background:none;border:none;
+      font-family:'DM Sans',sans-serif;width:100%;transition:color .2s;
+    }
+    .m-skip:hover{color:var(--text);}
+    .m-skip:disabled{opacity:.5;cursor:not-allowed;}
+    .m-note{font-size:11px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace;}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){.foot-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:640px){
+      .nav-links{display:none;}
+      .hamburger{display:block;}
+      .foot-grid{grid-template-columns:1fr;}
+      .tc-body{padding:20px;}
+      .tc-head{padding:24px 20px 0;}
+      .hero{padding:48px 0 34px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── AFFILIATE BANNER (live from Firebase) ── -->
+<div id="affBanner"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">🖼️</div>
+      <div class="logo-name">Image<em>Tools</em></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="terms.html">Terms</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark">🌙</button>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="container">
+  <section class="hero" id="tools">
+    <div class="hero-badge">✨ 5 Free Tools — No Account Needed</div>
+    <h1>Powerful <span class="hl">Image Tools</span><br>Right in Your Browser</h1>
+    <p>Convert to PDF, compress, resize, change format, and encode to Base64 — all 100% private. Nothing ever leaves your device.</p>
+    <div class="hero-pills">
+      <div class="pill"><span>🔒</span> 100% Private</div>
+      <div class="pill"><span>⚡</span> Instant Processing</div>
+      <div class="pill"><span>💰</span> Always Free</div>
+      <div class="pill"><span>📦</span> Batch + ZIP</div>
+    </div>
+  </section>
+</div>
+
+<!-- ── TABS ── -->
+<div class="tabs-bar" id="tabsBar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-tab="pdf">📄 Image to PDF</button>
+    <button class="tab-btn" data-tab="compress">🗜️ Compressor</button>
+    <button class="tab-btn" data-tab="convert">🔄 Format Convert</button>
+    <button class="tab-btn" data-tab="resize">📐 Resizer</button>
+    <button class="tab-btn" data-tab="base64">🔤 Base64</button>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<main>
+<div class="container">
+
+<!-- ===== IMAGE TO PDF ===== -->
+<section class="tool-section active" id="tab-pdf">
+  <div class="tool-card">
+    <div class="tc-head">
+      <div class="tc-title">📄 Image to PDF Converter</div>
+      <div class="tc-desc">Drop images, choose settings, download PDF — batch of thousands supported, all in-browser.</div>
+    </div>
+    <div class="tc-body">
+      <div class="opts">
+        <div class="opt"><label>Page Size</label><select id="pdfPageSize"><option value="fit">Fit to Image</option><option value="a4">A4</option><option value="letter">Letter</option><option value="legal">Legal</option><option value="a3">A3</option><option value="a5">A5</option></select></div>
+        <div class="opt"><label>Orientation</label><select id="pdfOri"><option value="auto">Auto (per image)</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div>
+        <div class="opt"><label>Quality</label><select id="pdfQual"><option value="1.0">Full — 100%</option><option value="0.92" selected>High — 92%</option><option value="0.85">Standard — 85%</option><option value="0.7">Compact — 70%</option></select></div>
+        <div class="opt"><label>Encoding</label><select id="pdfFmt"><option value="JPEG" selected>JPEG (smaller)</option><option value="PNG">PNG (lossless)</option></select></div>
+        <div class="opt"><label>Margin (mm)</label><input type="number" id="pdfMargin" min="0" max="50" value="0"></div>
+        <div class="opt"><label>Output File Name</label><input type="text" id="pdfName" value="images.pdf"></div>
+      </div>
+      <div class="drop" id="pdfDrop"><span class="drop-ico">🖼️</span><div class="drop-title">Drop images here</div><div class="drop-sub">or click to browse your device</div><div class="drop-btn">📁 Choose Files</div><div class="drop-fmt">JPG · PNG · GIF · BMP · TIFF · WebP</div></div>
+      <input type="file" id="pdfInput" multiple accept="image/*" style="display:none">
+      <div class="fbar" id="pdfBar" style="display:none"><div class="fbar-info"><strong id="pdfCnt">0</strong> images · <strong id="pdfSz">0 KB</strong></div><button class="fbar-btn" id="pdfClr">✕ Clear all</button></div>
+      <div class="flist" id="pdfList" style="display:none"></div>
+      <button class="run-btn" id="pdfRun" style="display:none">⚡ Convert to PDF</button>
+      <div class="prog" id="pdfProg"><div class="prog-track"><div class="prog-fill" id="pdfFill"></div></div><div class="prog-lbl" id="pdfLbl">Preparing…</div></div>
+      <div class="res" id="pdfRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMPRESS ===== -->
+<section class="tool-section" id="tab-compress">
+  <div class="tool-card">
+    <div class="tc-head"><div class="tc-title">🗜️ Image Compressor</div><div class="tc-desc">Shrink file sizes without ruining quality. Batch → ZIP download.</div></div>
+    <div class="tc-body">
+      <div class="opts">
+        <div class="opt"><label>Quality — <span class="rv" id="cmpQV">75%</span></label><input type="range" id="cmpQ" min="10" max="100" value="75"></div>
+        <div class="opt"><label>Output Format</label><select id="cmpFmt"><option value="image/jpeg">JPEG</option><option value="image/webp">WebP (smallest)</option><option value="image/png">PNG (lossless)</option></select></div>
+        <div class="opt"><label>Max Dimension px (0=keep)</label><input type="number" id="cmpMax" min="0" max="20000" value="0" step="100"></div>
+      </div>
+      <div class="drop" id="cmpDrop"><span class="drop-ico">🗜️</span><div class="drop-title">Drop images to compress</div><div class="drop-sub">Batch — compress many at once</div><div class="drop-btn">📁 Choose Files</div><div class="drop-fmt">JPG · PNG · WebP · BMP</div></div>
+      <input type="file" id="cmpInput" multiple accept="image/*" style="display:none">
+      <div class="fbar" id="cmpBar" style="display:none"><div class="fbar-info"><strong id="cmpCnt">0</strong> images · <strong id="cmpSz">0 KB</strong></div><button class="fbar-btn" id="cmpClr">✕ Clear all</button></div>
+      <div class="flist" id="cmpList" style="display:none"></div>
+      <button class="run-btn" id="cmpRun" style="display:none">⚡ Compress Images</button>
+      <div class="prog" id="cmpProg"><div class="prog-track"><div class="prog-fill" id="cmpFill"></div></div><div class="prog-lbl" id="cmpLbl">Preparing…</div></div>
+      <div class="res" id="cmpRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FORMAT CONVERT ===== -->
+<section class="tool-section" id="tab-convert">
+  <div class="tool-card">
+    <div class="tc-head"><div class="tc-title">🔄 Format Converter</div><div class="tc-desc">JPG ↔ PNG ↔ WebP in bulk. Results download as ZIP.</div></div>
+    <div class="tc-body">
+      <div class="opts">
+        <div class="opt"><label>Convert To</label><select id="cnvFmt"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div>
+        <div class="opt"><label>Quality — <span class="rv" id="cnvQV">95%</span></label><input type="range" id="cnvQ" min="10" max="100" value="95"></div>
+      </div>
+      <div class="drop" id="cnvDrop"><span class="drop-ico">🔄</span><div class="drop-title">Drop images to convert</div><div class="drop-sub">Change format in bulk</div><div class="drop-btn">📁 Choose Files</div><div class="drop-fmt">JPG · PNG · GIF · BMP · TIFF · WebP</div></div>
+      <input type="file" id="cnvInput" multiple accept="image/*" style="display:none">
+      <div class="fbar" id="cnvBar" style="display:none"><div class="fbar-info"><strong id="cnvCnt">0</strong> images · <strong id="cnvSz">0 KB</strong></div><button class="fbar-btn" id="cnvClr">✕ Clear all</button></div>
+      <div class="flist" id="cnvList" style="display:none"></div>
+      <button class="run-btn" id="cnvRun" style="display:none">⚡ Convert Images</button>
+      <div class="prog" id="cnvProg"><div class="prog-track"><div class="prog-fill" id="cnvFill"></div></div><div class="prog-lbl" id="cnvLbl">Preparing…</div></div>
+      <div class="res" id="cnvRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESIZE ===== -->
+<section class="tool-section" id="tab-resize">
+  <div class="tool-card">
+    <div class="tc-head"><div class="tc-title">📐 Image Resizer</div><div class="tc-desc">Resize by exact pixels, percentage, or max dimension. Batch + ZIP.</div></div>
+    <div class="tc-body">
+      <div class="opts">
+        <div class="opt"><label>Mode</label><select id="rszMode"><option value="px">Fixed Pixels (W × H)</option><option value="pct">Percentage</option><option value="maxw">Max Width</option><option value="maxh">Max Height</option></select></div>
+        <div class="opt"><label>Width (px or %)</label><input type="number" id="rszW" min="1" max="20000" value="800"></div>
+        <div class="opt"><label>Height (0 = auto)</label><input type="number" id="rszH" min="0" max="20000" value="0"></div>
+        <div class="opt"><label>Output Format</label><select id="rszFmt"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div>
+        <div class="opt"><label>Quality — <span class="rv" id="rszQV">90%</span></label><input type="range" id="rszQ" min="10" max="100" value="90"></div>
+      </div>
+      <div class="drop" id="rszDrop"><span class="drop-ico">📐</span><div class="drop-title">Drop images to resize</div><div class="drop-sub">Precision batch resizing</div><div class="drop-btn">📁 Choose Files</div><div class="drop-fmt">JPG · PNG · GIF · BMP · TIFF · WebP</div></div>
+      <input type="file" id="rszInput" multiple accept="image/*" style="display:none">
+      <div class="fbar" id="rszBar" style="display:none"><div class="fbar-info"><strong id="rszCnt">0</strong> images · <strong id="rszSz">0 KB</strong></div><button class="fbar-btn" id="rszClr">✕ Clear all</button></div>
+      <div class="flist" id="rszList" style="display:none"></div>
+      <button class="run-btn" id="rszRun" style="display:none">⚡ Resize Images</button>
+      <div class="prog" id="rszProg"><div class="prog-track"><div class="prog-fill" id="rszFill"></div></div><div class="prog-lbl" id="rszLbl">Preparing…</div></div>
+      <div class="res" id="rszRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BASE64 ===== -->
+<section class="tool-section" id="tab-base64">
+  <div class="tool-card">
+    <div class="tc-head"><div class="tc-title">🔤 Image to Base64</div><div class="tc-desc">Encode image to Base64 for embedding in HTML, CSS, or code. All browser-side.</div></div>
+    <div class="tc-body">
+      <div class="opts">
+        <div class="opt"><label>Output Format</label><select id="b64Fmt"><option value="dataurl">Data URL (img src)</option><option value="raw">Raw Base64</option><option value="css">CSS background</option><option value="html">HTML img tag</option></select></div>
+      </div>
+      <div class="drop" id="b64Drop"><span class="drop-ico">🔤</span><div class="drop-title">Drop one image</div><div class="drop-sub">Get instant Base64 string</div><div class="drop-btn">📁 Choose File</div><div class="drop-fmt">JPG · PNG · GIF · WebP · BMP · SVG</div></div>
+      <input type="file" id="b64Input" accept="image/*" style="display:none">
+      <div class="b64-out" id="b64Out">
+        <div class="b64-head"><strong id="b64Lbl">Data URL:</strong><button class="copy-btn" id="b64Copy">📋 Copy</button></div>
+        <textarea class="b64-ta" id="b64Ta" readonly></textarea>
+        <div class="b64-meta" id="b64Meta"></div>
+        <div class="copy-msg" id="b64Msg">✅ Copied to clipboard!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="feat-sec" id="features">
+  <div class="feat-title">Why Choose Image Tools?</div>
+  <div class="feat-sub">Built for speed, privacy and simplicity — no bloat, no accounts, no nonsense.</div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-ico">⚡</div><div class="feat-name">Lightning Fast</div><div class="feat-desc">All processing is instant in your browser using optimized JavaScript — zero server wait time ever.</div></div>
+    <div class="feat-card"><div class="feat-ico">🔒</div><div class="feat-name">100% Private</div><div class="feat-desc">Your images never leave your device. No server, no cloud storage, no data collection — ever.</div></div>
+    <div class="feat-card"><div class="feat-ico">💰</div><div class="feat-name">Always Free</div><div class="feat-desc">No registration, no subscription, no watermarks. All 5 tools unlimited, forever free.</div></div>
+    <div class="feat-card"><div class="feat-ico">📦</div><div class="feat-name">Batch + ZIP</div><div class="feat-desc">Process hundreds of images at once — results bundled in a clean ZIP download.</div></div>
+    <div class="feat-card"><div class="feat-ico">📱</div><div class="feat-name">Works Everywhere</div><div class="feat-desc">Fully responsive — seamless on desktop, tablet, and all mobile browsers.</div></div>
+    <div class="feat-card"><div class="feat-ico">🎨</div><div class="feat-name">Full Quality Control</div><div class="feat-desc">Fine-tune quality, format, size and orientation to fit your exact needs without compromise.</div></div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="logo-name" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Image<em style="color:var(--accent);font-style:normal">Tools</em></div>
+      <p>Five powerful image tools — free, private, no account needed. Everything runs in your browser.</p>
+    </div>
+    <div class="foot-col"><h5>Tools</h5><a href="#" onclick="return switchTab('pdf')">Image to PDF</a><a href="#" onclick="return switchTab('compress')">Compressor</a><a href="#" onclick="return switchTab('convert')">Format Convert</a><a href="#" onclick="return switchTab('resize')">Resizer</a><a href="#" onclick="return switchTab('base64')">Base64</a></div>
+    <div class="foot-col"><h5>Pages</h5><a href="blog.html">Blog</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div>
+    <div class="foot-col"><h5>Contact</h5><a href="mailto:shakirmhussain12@gmail.com">📧 Email</a><a href="https://github.com/mh3210152-web" target="_blank">🔗 GitHub</a></div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 ImageTools. Made with ❤️ by <a href="https://github.com/mh3210152-web" target="_blank">mh3210152-web</a></span>
+    <span><a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<!-- ── DOWNLOAD MODAL ── -->
+<div id="dlModal">
+  <div class="m-card">
+    <div class="m-badge">⚡ Sponsored</div>
+    <div class="m-emoji" id="mEm">🚀</div>
+    <div class="m-title" id="mTi"></div>
+    <div class="m-desc"  id="mDe"></div>
+    <a class="m-cta" id="mCta" href="#" target="_blank" rel="noopener sponsored">Visit Now →</a>
+    <button class="m-skip" id="mSkip">Skip and download (<span id="mSecs">5</span>s)</button>
+    <div class="m-note">Your file will download automatically after skipping</div>
+  </div>
+</div>
+
+<!-- ── JAVASCRIPT ── -->
+<script>
+// ============================================================
+// AFFILIATE — reads from window._liveAds (set by Firebase module)
+// ============================================================
+function getAds(pos) {
+  return (window._liveAds || [])
+    .filter(a => a.position === pos || a.position === 'both');
+}
+
+// Render top banner
+function renderBanner(ads) {
+  const bannerAds = (ads || window._liveAds || [])
+    .filter(a => a.position === 'banner' || a.position === 'both');
+  if (!bannerAds.length) return;
+  const a = bannerAds[0];
+  const colors = {
+    cool : 'linear-gradient(90deg,#5a4fcf,#9b7dff)',
+    hot  : 'linear-gradient(90deg,#d63b5c,#f07020)',
+    gold : 'linear-gradient(90deg,#e8b830,#e07010)',
+    dark : 'var(--card2)'
+  };
+  const txtColor = a.style === 'gold' ? '#1a1000' : a.style === 'dark' ? 'var(--text)' : '#fff';
+  document.getElementById('affBanner').innerHTML = `
+    <div class="aff-strip ${a.style||'cool'}" style="color:${txtColor}">
+      <span style="font-size:24px">${a.emoji||'📢'}</span>
+      <div class="aff-strip-text">
+        <strong>${a.title}</strong>
+        ${a.desc ? `<span>${a.desc}</span>` : ''}
+      </div>
+      <a href="${a.url}" target="_blank" rel="noopener sponsored"
+         class="aff-cta" style="color:${txtColor}">${a.cta||'Visit Now →'}</a>
+      <button class="aff-close" style="color:${txtColor}"
+        onclick="document.getElementById('affBanner').innerHTML=''">✕</button>
+    </div>`;
+}
+
+// ── DOWNLOAD MODAL ────────────────────────────────────────
+let _pendingDl = null, _mTimer = null;
+
+function showModal(dlFn) {
+  const ads = getAds('download');
+  if (!ads.length) { dlFn(); return; }       // no download ads → just download
+  const a = ads[0];
+  _pendingDl = dlFn;
+  document.getElementById('mEm').textContent  = a.emoji || '🚀';
+  document.getElementById('mTi').textContent  = a.title;
+  document.getElementById('mDe').textContent  = a.desc  || 'Check out this amazing offer!';
+  document.getElementById('mCta').textContent = a.cta   || 'Visit Now →';
+  document.getElementById('mCta').href        = a.url;
+
+  let secs = 5;
+  const skipBtn = document.getElementById('mSkip');
+  skipBtn.disabled = true;
+  document.getElementById('mSecs').textContent = secs;
+  document.getElementById('dlModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  clearInterval(_mTimer);
+  _mTimer = setInterval(() => {
+    secs--;
+    document.getElementById('mSecs').textContent = secs;
+    if (secs <= 0) {
+      clearInterval(_mTimer);
+      skipBtn.disabled = false;
+      skipBtn.innerHTML = 'Skip — download now';
+    }
+  }, 1000);
+}
+
+function closeModal(dl) {
+  clearInterval(_mTimer);
+  document.getElementById('dlModal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (dl && _pendingDl) { _pendingDl(); _pendingDl = null; }
+}
+
+document.getElementById('mSkip').addEventListener('click', () => closeModal(true));
+document.getElementById('mCta').addEventListener('click', () => setTimeout(() => closeModal(true), 400));
+document.getElementById('dlModal').addEventListener('click', e => {
+  if (e.target.id === 'dlModal') closeModal(true);
+});
+
+// ============================================================
+// CORE UTILITIES
+// ============================================================
+const fmtB = b => b < 1024 ? b+'B' : b < 1048576 ? (b/1024).toFixed(1)+'KB' : (b/1048576).toFixed(2)+'MB';
+
+const loadImg = f => new Promise((res, rej) => {
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload  = () => res({ img, url });
+  img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Cannot load: ' + f.name)); };
+  img.src = url;
+});
+
+const toBlob = (c, t, q) => new Promise(r => c.toBlob(r, t, q));
+
+const dlBlob = (blob, name) => {
+  const u = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = u; a.download = name;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(u), 1200);
+};
+
+const repExt = (n, e) => { const i = n.lastIndexOf('.'); return (i >= 0 ? n.slice(0, i) : n) + '.' + e; };
+const g = id => document.getElementById(id);
+
+// ============================================================
+// FILE PICKER FACTORY
+// ============================================================
+function makePicker({ dropId, inputId, barId, cntId, szId, listId, runId, clrId }) {
+  const state = { files: [] };
+  const [drop,inp,bar,cnt,sz,list,run,clr] =
+    [dropId,inputId,barId,cntId,szId,listId,runId,clrId].map(g);
+
+  const render = () => {
+    const n = state.files.length;
+    bar.style.display  = n ? 'flex'  : 'none';
+    list.style.display = n ? 'block' : 'none';
+    run.style.display  = n ? 'flex'  : 'none';
+    if (!n) return;
+    cnt.textContent = n;
+    sz.textContent  = fmtB(state.files.reduce((s, f) => s + f.size, 0));
+    const frag = document.createDocumentFragment(), max = 200;
+    state.files.slice(0, max).forEach((f, i) => {
+      const row = document.createElement('div'); row.className = 'frow';
+      row.innerHTML = `<span class="frow-name">🖼️ ${f.name}</span><span class="frow-sz">${fmtB(f.size)}</span>`;
+      const rm = document.createElement('button'); rm.className = 'frm'; rm.textContent = '✕';
+      rm.onclick = () => { state.files.splice(i, 1); render(); };
+      row.appendChild(rm); frag.appendChild(row);
+    });
+    if (n > max) {
+      const m = document.createElement('div'); m.className = 'frow';
+      m.style.cssText = 'justify-content:center;color:var(--muted)';
+      m.textContent = `…and ${n - max} more`; frag.appendChild(m);
+    }
+    list.innerHTML = ''; list.appendChild(frag);
+  };
+
+  const add = files => {
+    state.files = state.files.concat(Array.from(files).filter(f => f.type.startsWith('image/')));
+    render();
+  };
+
+  drop.addEventListener('click', () => inp.click());
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); add(e.dataTransfer.files); });
+  inp.addEventListener('change', e => { add(e.target.files); inp.value = ''; });
+  clr.addEventListener('click', () => { state.files = []; render(); });
+  return state;
+}
+
+// ── BATCH PROCESSOR (shared by Compress / Convert / Resize) ──
+async function batchRun({ state, label, transform, fillId, lblId, runBtn, resEl, zipName }) {
+  const total = state.files.length; if (!total) return;
+  runBtn.disabled = true;
+  const prog = runBtn.closest('.tc-body').querySelector('.prog'); prog.classList.add('show');
+  resEl.innerHTML = '';
+  g(fillId).style.width = '0%';
+  const useZip = total > 1 && typeof JSZip !== 'undefined';
+  const zip = useZip ? new JSZip() : null;
+  let origTotal = 0, compTotal = 0, done = 0;
+  try {
+    for (let i = 0; i < total; i++) {
+      const f = state.files[i];
+      g(lblId).textContent = `${label} ${i + 1}/${total} — ${f.name}`;
+      origTotal += f.size;
+      let loaded; try { loaded = await loadImg(f); } catch(e) { continue; }
+      const result = await transform(loaded, f);
+      URL.revokeObjectURL(loaded.url);
+      if (!result) continue;
+      const { blob, meta, outName } = result;
+      compTotal += blob.size; done++;
+      if (useZip) {
+        zip.file(outName, blob);
+      } else {
+        dlBlob(blob, outName);
+        const row = document.createElement('div'); row.className = 'res-row';
+        row.innerHTML = `<div class="res-info"><div class="res-name">🖼️ ${outName}</div><div class="res-meta">${meta}</div></div>`;
+        const dl = document.createElement('a'); dl.className = 'dl-btn'; dl.textContent = '⬇ Download';
+        dl.href = URL.createObjectURL(blob); dl.download = outName;
+        row.appendChild(dl); resEl.appendChild(row);
+      }
+      g(fillId).style.width = Math.round((i + 1) / total * 100) + '%';
+      if ((i + 1) % 4 === 0) await new Promise(r => setTimeout(r, 0));
+    }
+    if (useZip && done > 0) {
+      g(lblId).textContent = 'Building ZIP…';
+      const zBlob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+      const name = zipName + '-' + Date.now() + '.zip';
+      dlBlob(zBlob, name);
+      const saved = origTotal > 0 ? Math.round((1 - compTotal / origTotal) * 100) : 0;
+      const row = document.createElement('div'); row.className = 'res-row';
+      row.innerHTML = `<div class="res-info"><div class="res-name">📦 ${name}</div><div class="res-meta">${done} files ${saved > 0 ? '· saved ' + saved + '%' : ''} · ${fmtB(zBlob.size)}</div></div>`;
+      const dl = document.createElement('a'); dl.className = 'dl-btn'; dl.textContent = '⬇ Download again';
+      dl.href = URL.createObjectURL(zBlob); dl.download = name;
+      row.appendChild(dl); resEl.appendChild(row);
+    }
+    g(lblId).textContent = `✅ Done! ${done}/${total} processed.`;
+  } catch(err) { g(lblId).textContent = 'Error: ' + err.message; }
+  finally { runBtn.disabled = false; }
+}
+
+// ============================================================
+// PDF TOOL
+// ============================================================
+const pdfState = makePicker({ dropId:'pdfDrop', inputId:'pdfInput', barId:'pdfBar', cntId:'pdfCnt', szId:'pdfSz', listId:'pdfList', runId:'pdfRun', clrId:'pdfClr' });
+
+g('pdfRun').addEventListener('click', () => {
+  if (!pdfState.files.length) return;
+  showModal(async () => {
+    if (!window.jspdf?.jsPDF) { alert('PDF library loading… refresh and try again.'); return; }
+    const { jsPDF } = window.jspdf;
+    const pageSize = g('pdfPageSize').value;
+    const ori  = g('pdfOri').value;
+    const qual = parseFloat(g('pdfQual').value);
+    const fmt  = g('pdfFmt').value;
+    const margin = parseFloat(g('pdfMargin').value) || 0;
+    let fname = (g('pdfName').value || 'images').trim();
+    if (!fname.toLowerCase().endsWith('.pdf')) fname += '.pdf';
+
+    const runBtn = g('pdfRun'); runBtn.disabled = true;
+    const prog = runBtn.closest('.tc-body').querySelector('.prog'); prog.classList.add('show');
+    g('pdfRes').innerHTML = ''; g('pdfFill').style.width = '0%';
+
+    const pxMm = px => px * 25.4 / 96;
+    const dimsMm = { a4:[210,297], letter:[215.9,279.4], legal:[215.9,355.6], a3:[297,420], a5:[148,210] };
+    const total = pdfState.files.length; let doc = null;
+
+    try {
+      for (let i = 0; i < total; i++) {
+        const f = pdfState.files[i];
+        g('pdfLbl').textContent = `Processing ${i+1}/${total} — ${f.name}`;
+        let loaded; try { loaded = await loadImg(f); } catch(e) { continue; }
+        const canvas = document.createElement('canvas');
+        canvas.width = loaded.img.naturalWidth; canvas.height = loaded.img.naturalHeight;
+        canvas.getContext('2d').drawImage(loaded.img, 0, 0);
+        const dataUrl = fmt === 'PNG' ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', qual);
+        URL.revokeObjectURL(loaded.url);
+        const imgW = pxMm(canvas.width), imgH = pxMm(canvas.height);
+        let pgW, pgH, pgOri;
+        if (pageSize === 'fit') {
+          pgW = imgW + margin * 2; pgH = imgH + margin * 2;
+          pgOri = pgW >= pgH ? 'l' : 'p';
+        } else {
+          const [pw, ph] = dimsMm[pageSize];
+          pgOri = ori === 'auto' ? (imgW > imgH ? 'l' : 'p') : (ori === 'landscape' ? 'l' : 'p');
+          pgW = pgOri === 'l' ? Math.max(pw,ph) : Math.min(pw,ph);
+          pgH = pgOri === 'l' ? Math.min(pw,ph) : Math.max(pw,ph);
+        }
+        if (!doc) doc = new jsPDF({ orientation:pgOri, unit:'mm', format:pageSize==='fit'?[pgW,pgH]:pageSize, compress:true });
+        else doc.addPage(pageSize==='fit'?[pgW,pgH]:pageSize, pgOri);
+        const avW=pgW-margin*2, avH=pgH-margin*2, ratio=Math.min(avW/imgW,avH/imgH);
+        const dW=imgW*ratio, dH=imgH*ratio;
+        doc.addImage(dataUrl, fmt, margin+(avW-dW)/2, margin+(avH-dH)/2, dW, dH, undefined, 'FAST');
+        canvas.width = 0; canvas.height = 0;
+        g('pdfFill').style.width = Math.round((i+1)/total*100) + '%';
+        if ((i+1) % 5 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      if (!doc) { g('pdfLbl').textContent = 'No readable images found.'; return; }
+      const blob = doc.output('blob');
+      dlBlob(blob, fname);
+      g('pdfLbl').textContent = `✅ Done! ${total} images → PDF (${fmtB(blob.size)})`;
+      const row = document.createElement('div'); row.className = 'res-row';
+      row.innerHTML = `<div class="res-info"><div class="res-name">📄 ${fname}</div><div class="res-meta">${total} pages · ${fmtB(blob.size)}</div></div>`;
+      const dl = document.createElement('a'); dl.className = 'dl-btn'; dl.textContent = '⬇ Download again';
+      dl.href = URL.createObjectURL(blob); dl.download = fname;
+      row.appendChild(dl); g('pdfRes').appendChild(row);
+    } catch(err) { g('pdfLbl').textContent = 'Error: ' + err.message; }
+    finally { runBtn.disabled = false; }
+  });
+});
+
+// ============================================================
+// COMPRESS TOOL
+// ============================================================
+const cmpState = makePicker({ dropId:'cmpDrop', inputId:'cmpInput', barId:'cmpBar', cntId:'cmpCnt', szId:'cmpSz', listId:'cmpList', runId:'cmpRun', clrId:'cmpClr' });
+g('cmpQ').addEventListener('input', () => g('cmpQV').textContent = g('cmpQ').value + '%');
+
+g('cmpRun').addEventListener('click', () => {
+  if (!cmpState.files.length) return;
+  showModal(() => batchRun({
+    state: cmpState, label: 'Compressing',
+    transform: async ({ img }, f) => {
+      const fmt = g('cmpFmt').value, q = parseInt(g('cmpQ').value) / 100;
+      const maxD = parseInt(g('cmpMax').value) || 0;
+      const ext = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (maxD > 0 && (w > maxD || h > maxD)) { const r = Math.min(maxD/w, maxD/h); w = Math.round(w*r); h = Math.round(h*r); }
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      const blob = await toBlob(c, fmt, q); c.width = 0; c.height = 0;
+      return blob ? { blob, meta: `${fmtB(f.size)} → ${fmtB(blob.size)}`, outName: repExt(f.name, ext) } : null;
+    },
+    fillId:'cmpFill', lblId:'cmpLbl', runBtn:g('cmpRun'), resEl:g('cmpRes'), zipName:'compressed'
+  }));
+});
+
+// ============================================================
+// FORMAT CONVERTER
+// ============================================================
+const cnvState = makePicker({ dropId:'cnvDrop', inputId:'cnvInput', barId:'cnvBar', cntId:'cnvCnt', szId:'cnvSz', listId:'cnvList', runId:'cnvRun', clrId:'cnvClr' });
+g('cnvQ').addEventListener('input', () => g('cnvQV').textContent = g('cnvQ').value + '%');
+
+g('cnvRun').addEventListener('click', () => {
+  if (!cnvState.files.length) return;
+  showModal(() => batchRun({
+    state: cnvState, label: 'Converting',
+    transform: async ({ img }, f) => {
+      const fmt = g('cnvFmt').value, q = parseInt(g('cnvQ').value) / 100;
+      const ext = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+      const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      const blob = await toBlob(c, fmt, q); c.width = 0; c.height = 0;
+      return blob ? { blob, meta: fmtB(blob.size), outName: repExt(f.name, ext) } : null;
+    },
+    fillId:'cnvFill', lblId:'cnvLbl', runBtn:g('cnvRun'), resEl:g('cnvRes'), zipName:'converted'
+  }));
+});
+
+// ============================================================
+// IMAGE RESIZER
+// ============================================================
+const rszState = makePicker({ dropId:'rszDrop', inputId:'rszInput', barId:'rszBar', cntId:'rszCnt', szId:'rszSz', listId:'rszList', runId:'rszRun', clrId:'rszClr' });
+g('rszQ').addEventListener('input', () => g('rszQV').textContent = g('rszQ').value + '%');
+
+g('rszRun').addEventListener('click', () => {
+  if (!rszState.files.length) return;
+  showModal(() => batchRun({
+    state: rszState, label: 'Resizing',
+    transform: async ({ img }, f) => {
+      const mode = g('rszMode').value, wV = parseInt(g('rszW').value) || 800, hV = parseInt(g('rszH').value) || 0;
+      const fmt = g('rszFmt').value, q = parseInt(g('rszQ').value) / 100;
+      const ext = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+      let sw = img.naturalWidth, sh = img.naturalHeight, tw, th;
+      if (mode === 'px')   { tw = wV; th = hV > 0 ? hV : Math.round(sh * (wV / sw)); }
+      else if (mode === 'pct') { tw = Math.round(sw * wV / 100); th = Math.round(sh * wV / 100); }
+      else if (mode === 'maxw') { tw = sw <= wV ? sw : wV; th = sw <= wV ? sh : Math.round(sh * (wV / sw)); }
+      else { th = sh <= wV ? sh : wV; tw = sh <= wV ? sw : Math.round(sw * (wV / sh)); }
+      const c = document.createElement('canvas'); c.width = tw; c.height = th;
+      c.getContext('2d').drawImage(img, 0, 0, tw, th);
+      const blob = await toBlob(c, fmt, q); c.width = 0; c.height = 0;
+      return blob ? { blob, meta: `${sw}×${sh} → ${tw}×${th} · ${fmtB(blob.size)}`, outName: repExt(f.name, ext) } : null;
+    },
+    fillId:'rszFill', lblId:'rszLbl', runBtn:g('rszRun'), resEl:g('rszRes'), zipName:'resized'
+  }));
+});
+
+// ============================================================
+// BASE64 TOOL
+// ============================================================
+let _b64Last = null;
+const processB64 = file => {
+  if (!file || !file.type.startsWith('image/')) return;
+  _b64Last = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result, fmt = g('b64Fmt').value;
+    let out, lbl;
+    if      (fmt === 'dataurl') { out = dataUrl; lbl = 'Data URL:'; }
+    else if (fmt === 'raw')     { out = dataUrl.split(',')[1]; lbl = 'Raw Base64:'; }
+    else if (fmt === 'css')     { out = `background-image: url("${dataUrl}");`; lbl = 'CSS:'; }
+    else                        { out = `<img src="${dataUrl}" alt="${file.name}">`; lbl = 'HTML img tag:'; }
+    g('b64Ta').value  = out;
+    g('b64Lbl').textContent = lbl;
+    g('b64Meta').textContent = `File: ${fmtB(file.size)} · Output: ${out.length.toLocaleString()} chars`;
+    g('b64Out').style.display = 'block';
+    g('b64Msg').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+};
+
+g('b64Drop').addEventListener('click', () => g('b64Input').click());
+g('b64Drop').addEventListener('dragover', e => { e.preventDefault(); g('b64Drop').classList.add('over'); });
+g('b64Drop').addEventListener('dragleave', () => g('b64Drop').classList.remove('over'));
+g('b64Drop').addEventListener('drop', e => { e.preventDefault(); g('b64Drop').classList.remove('over'); processB64(e.dataTransfer.files[0]); });
+g('b64Input').addEventListener('change', e => { processB64(e.target.files[0]); g('b64Input').value = ''; });
+g('b64Fmt').addEventListener('change', () => { if (_b64Last) processB64(_b64Last); });
+g('b64Copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(g('b64Ta').value).then(() => {
+    g('b64Msg').style.display = 'block';
+    setTimeout(() => g('b64Msg').style.display = 'none', 2600);
+  });
+});
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tool-section').forEach(s => s.classList.toggle('active', s.id === 'tab-' + name));
+  g('tabsBar').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return false;
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+// Mobile menu
+function toggleMenu() {
+  const nl = document.querySelector('.nav-links');
+  const isOpen = nl.style.display === 'flex';
+  if (isOpen) {
+    nl.removeAttribute('style');
+  } else {
+    nl.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:var(--surface);padding:14px 20px;border-bottom:1px solid var(--border);z-index:199;gap:2px;';
+  }
+}
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+function applyTheme(theme) {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  if (theme === 'light') {
+    html.setAttribute('data-theme', 'light');
+    if (btn) btn.textContent = '☀️';
+  } else {
+    html.removeAttribute('data-theme');
+    if (btn) btn.textContent = '🌙';
+  }
+}
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const next = isLight ? 'dark' : 'light';
+  localStorage.setItem('imgtools-theme', next);
+  applyTheme(next);
+}
+(function(){
+  const saved = localStorage.getItem('imgtools-theme') || 'dark';
+  applyTheme(saved);
+  document.addEventListener('DOMContentLoaded', () => applyTheme(localStorage.getItem('imgtools-theme') || 'dark'));
+})();
+
+</script>
+</body>
+</html>

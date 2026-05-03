@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog - Image to PDF Converter. Read tips, tutorials, and best practices for converting images to PDF.">
+    <meta name="keywords" content="image to pdf blog, pdf conversion tips, tutorials, guides, best practices">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Blog - Image to PDF Converter">
+    <meta property="og:description" content="Read latest articles, tips, and tutorials about image to PDF conversion.">
+    <meta property="og:type" content="website">
+    <title>Blog - Image to PDF Converter | Tips & Tutorials</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+        }
+
+        .blog-content {
+            padding: 30px;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .blog-category {
+            display: inline-block;
+            background: #e8f0ff;
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .blog-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .blog-excerpt {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .blog-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .author-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .read-more {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .read-more:hover {
+            color: #764ba2;
+        }
+
+        .read-time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .featured-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 60px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .featured-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            color: white;
+        }
+
+        .featured-content h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .featured-content .blog-category {
+            margin-bottom: 15px;
+        }
+
+        .featured-content p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .featured-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .featured-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .newsletter-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .newsletter-section h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .newsletter-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 10px;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .newsletter-form button {
+            padding: 12px 30px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .newsletter-form button:hover {
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #555;
+            padding-top: 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">📄 Image to PDF</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="privacy.html">Privacy</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+<div style="background:linear-gradient(90deg,#6c63ff,#a78bfa);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;color:#fff;font-size:14px;">
+  <span style="font-size:20px;">🚀</span>
+  <div><strong>Want a More Powerful App?</strong> <span style="opacity:.85;font-size:13px;">Hamara full platform azmaein — learning &amp; productivity ke liye!</span></div>
+  <a href="https://learn-doshub.vercel.app/index.html" target="_blank" rel="noopener" style="padding:8px 18px;border-radius:8px;background:rgba(0,0,0,.2);color:#fff;font-weight:700;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,.25);">Try DoSHub →</a>
+</div>
+
+    <div class="hero-section">
+        <div class="container">
+            <h1>📝 Blog & Resources</h1>
+            <p>Discover tips, tutorials, and best practices for converting images to PDF</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" placeholder="Search articles...">
+                    <button>Search</button>
+                </div>
+            </div>
+
+            <div class="categories">
+                <button class="category-btn active">All</button>
+                <button class="category-btn">Tutorials</button>
+                <button class="category-btn">Tips & Tricks</button>
+                <button class="category-btn">Updates</button>
+                <button class="category-btn">How-To</button>
+            </div>
+
+            <div class="featured-section">
+                <div class="featured-grid">
+                    <div class="featured-image">🎨</div>
+                    <div class="featured-content">
+                        <span class="blog-category">Featured</span>
+                        <h2>Complete Guide to Converting Images to PDF in 2026</h2>
+                        <p>Learn everything you need to know about converting images to PDF. From basic tips to advanced techniques, this comprehensive guide covers it all. Discover best practices for maintaining quality, managing file sizes, and organizing your documents efficiently.</p>
+                        <a href="#" class="featured-btn">Read Full Article →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-grid">
+                <div class="blog-card">
+                    <div class="blog-image">📸</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tutorials</span>
+                            <span class="read-time">5 min read</span>
+                        </div>
+                        <h3 class="blog-title">How to Convert JPG to PDF: Step-by-Step Guide</h3>
+                        <p class="blog-excerpt">Learn the easiest way to convert your JPG images to PDF format. This tutorial walks you through the entire process with helpful screenshots and tips.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">⚡</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tips & Tricks</span>
+                            <span class="read-time">4 min read</span>
+                        </div>
+                        <h3 class="blog-title">Top 10 Image to PDF Conversion Tips</h3>
+                        <p class="blog-excerpt">Discover the best practices and insider tips for converting images to PDF. Learn how to optimize quality, reduce file size, and organize your documents.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">🔒</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">How-To</span>
+                            <span class="read-time">6 min read</span>
+                        </div>
+                        <h3 class="blog-title">Secure Image to PDF Conversion: What You Need to Know</h3>
+                        <p class="blog-excerpt">Privacy matters. Learn how our image to PDF converter keeps your data safe and secure. Understand the importance of client-side processing.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">📱</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tutorials</span>
+                            <span class="read-time">4 min read</span>
+                        </div>
+                        <h3 class="blog-title">Convert Images to PDF on Mobile: iOS & Android Guide</h3>
+                        <p class="blog-excerpt">Don't have a computer? No problem! Learn how to convert images to PDF directly from your smartphone using our mobile-friendly web app.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">🎯</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tips & Tricks</span>
+                            <span class="read-time">5 min read</span>
+                        </div>
+                        <h3 class="blog-title">Optimize PDF File Size Without Losing Quality</h3>
+                        <p class="blog-excerpt">Large PDF files taking up too much space? Discover proven techniques to reduce file size while maintaining excellent image quality.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">🚀</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Updates</span>
+                            <span class="read-time">3 min read</span>
+                        </div>
+                        <h3 class="blog-title">What's New: Image to PDF Converter v2.0 Release</h3>
+                        <p class="blog-excerpt">Check out the exciting new features and improvements in our latest version. Faster conversions, better quality, and more control options.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">📚</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">How-To</span>
+                            <span class="read-time">7 min read</span>
+                        </div>
+                        <h3 class="blog-title">Batch Convert Multiple Images to Single PDF</h3>
+                        <p class="blog-excerpt">Need to convert multiple images into one PDF? Follow our detailed guide to learn the easiest and fastest way to combine images.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">💡</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tips & Tricks</span>
+                            <span class="read-time">4 min read</span>
+                        </div>
+                        <h3 class="blog-title">PNG vs JPG: Which Format Works Best for PDF</h3>
+                        <p class="blog-excerpt">Confused about image formats? Learn the differences between PNG and JPG and which one is best for your PDF conversion needs.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image">✨</div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">Tutorials</span>
+                            <span class="read-time">6 min read</span>
+                        </div>
+                        <h3 class="blog-title">Professional Document Creation: From Images to PDF</h3>
+                        <p class="blog-excerpt">Create professional documents from your images. Learn layout tips, formatting tricks, and best practices for business documents.</p>
+                        <div class="blog-footer">
+                            <div class="author">
+                                <div class="author-avatar">SH</div>
+                                <div class="author-name">Shakir Hussain</div>
+                            </div>
+                            <a href="#" class="read-more">Read →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="newsletter-section">
+                <h2>📧 Subscribe to Our Newsletter</h2>
+                <p>Get the latest tips, tutorials, and updates delivered to your inbox weekly</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email..." required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <a href="#">Tutorials</a>
+                    <a href="#">Tips & Tricks</a>
+                    <a href="#">How-To Guides</a>
+                    <a href="#">Updates</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="contact.html">Get Support</a>
+                    <a href="https://github.com/mh3210152-web/image-to-pdf-" target="_blank">GitHub Repository</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>📧 Email: <a href="mailto:shakirmhussain12@gmail.com">shakirmhussain12@gmail.com</a></p>
+                    <p>🔗 GitHub: <a href="https://github.com/mh3210152-web" target="_blank">mh3210152-web</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Image to PDF Converter. All rights reserved.</p>
+                <p>Made with ❤️ by <a href="https://github.com/mh3210152-web" style="color: #667eea;">Shakir Hussain</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Category filter functionality
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Newsletter form
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for subscribing! Check your email for confirmation.');
+            this.reset();
+        });
+
+        // Search functionality
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const query = document.querySelector('.search-box input').value;
+            if(query) {
+                alert('Searching for: ' + query);
+            }
+        });
+    </script>
+</body>
+</html>

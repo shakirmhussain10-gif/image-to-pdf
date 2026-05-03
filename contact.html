@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Image to PDF Converter. Get in touch with us for support, feedback, or inquiries.">
+    <meta name="robots" content="index, follow">
+    <title>Contact Us - Image to PDF Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        main {
+            padding: 60px 0;
+        }
+
+        .content {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 40px;
+            text-align: center;
+        }
+
+        .contact-intro {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .contact-method {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .contact-method h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .contact-method p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .contact-method a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .contact-method a:hover {
+            color: #764ba2;
+        }
+
+        .form-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="subject"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="subject"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .faq-section {
+            margin-top: 40px;
+        }
+
+        .faq-section h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 5px;
+        }
+
+        .faq-item h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .faq-item p {
+            color: #666;
+        }
+
+        .response-time {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #555;
+            padding-top: 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">📄 Image to PDF</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="terms.html">Terms</a></li>
+                    <li><a href="privacy.html">Privacy</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+<div style="background:linear-gradient(90deg,#6c63ff,#a78bfa);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;color:#fff;font-size:14px;">
+  <span style="font-size:20px;">🚀</span>
+  <div><strong>Want a More Powerful App?</strong> <span style="opacity:.85;font-size:13px;">Hamara full platform azmaein — learning &amp; productivity ke liye!</span></div>
+  <a href="https://learn-doshub.vercel.app/index.html" target="_blank" rel="noopener" style="padding:8px 18px;border-radius:8px;background:rgba(0,0,0,.2);color:#fff;font-weight:700;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,.25);">Try DoSHub →</a>
+</div>
+
+    <main>
+        <div class="container">
+            <div class="content">
+                <h1>Contact Us</h1>
+                <p class="contact-intro">
+                    Have a question or feedback? We'd love to hear from you! Get in touch with our support team.
+                </p>
+
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <h2>📧 Email</h2>
+                        <p>Send us an email directly for the quickest response.</p>
+                        <a href="mailto:shakirmhussain12@gmail.com">shakirmhussain12@gmail.com</a>
+                        <p style="font-size: 12px; margin-top: 10px; color: #999;">Average response time: 24 hours</p>
+                    </div>
+
+                    <div class="contact-method">
+                        <h2>💻 GitHub</h2>
+                        <p>Report issues or contribute to our project on GitHub.</p>
+                        <a href="https://github.com/mh3210152-web/image-to-pdf-" target="_blank">Visit Repository</a>
+                        <p style="font-size: 12px; margin-top: 10px; color: #999;">Open-source collaboration</p>
+                    </div>
+
+                    <div class="contact-method">
+                        <h2>🐛 Report Bug</h2>
+                        <p>Found a bug? Help us improve by reporting it.</p>
+                        <a href="https://github.com/mh3210152-web/image-to-pdf-/issues" target="_blank">Create an Issue</a>
+                        <p style="font-size: 12px; margin-top: 10px; color: #999;">Detailed feedback appreciated</p>
+                    </div>
+                </div>
+
+                <div class="response-time">
+                    <strong>📞 Support Hours:</strong> We aim to respond to all inquiries within 24 hours during business days. For urgent issues, please mark your email as "URGENT".
+                </div>
+
+                <div class="form-section">
+                    <h2>Send us a Message</h2>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Fill out the form below and we'll get back to you as soon as possible.
+                    </p>
+                    <form id="contactForm" method="POST" action="https://formspree.io/f/your_form_id">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category">
+                                <option value="">Select a category...</option>
+                                <option value="support">Support Request</option>
+                                <option value="bug">Bug Report</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="feedback">General Feedback</option>
+                                <option value="partnership">Partnership Inquiry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required placeholder="Please provide as much detail as possible..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                    <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                        * Required fields. By submitting this form, you agree to our <a href="privacy.html" style="color: #667eea;">Privacy Policy</a>.
+                    </p>
+                </div>
+
+                <div class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+
+                    <div class="faq-item">
+                        <h3>How long does it take to convert images to PDF?</h3>
+                        <p>
+                            Conversion is instant! Most images are converted to PDF within a few seconds, depending on the number and size of images.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Is my data secure?</h3>
+                        <p>
+                            Yes! All processing happens locally on your device. Your images are never uploaded to any server, ensuring complete privacy and security.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>What image formats are supported?</h3>
+                        <p>
+                            We support JPG, PNG, GIF, BMP, TIFF, and WebP formats. You can convert multiple images at once.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Is there a file size limit?</h3>
+                        <p>
+                            There's no hard limit, but we recommend keeping individual image files under 10MB for optimal performance.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Do I need to create an account?</h3>
+                        <p>
+                            No! Our service is completely free and doesn't require registration or login.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>How can I report a bug?</h3>
+                        <p>
+                            You can report bugs by creating an issue on our <a href="https://github.com/mh3210152-web/image-to-pdf-/issues" style="color: #667eea;">GitHub repository</a> or emailing us at <a href="mailto:shakirmhussain12@gmail.com" style="color: #667eea;">shakirmhussain12@gmail.com</a>.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Can I contribute to the project?</h3>
+                        <p>
+                            Absolutely! We welcome contributions. Check out our <a href="https://github.com/mh3210152-web/image-to-pdf-" style="color: #667eea;">GitHub repository</a> to get started with development.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Is there a mobile app?</h3>
+                        <p>
+                            Our web application works seamlessly on mobile devices and tablets. We're exploring mobile app development for the future.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <p>Image to PDF Converter is a free, secure online tool to convert images into PDF documents instantly.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p>📧 Email: <a href="mailto:shakirmhussain12@gmail.com">shakirmhussain12@gmail.com</a></p>
+                    <p>🔗 GitHub: <a href="https://github.com/mh3210152-web/image-to-pdf-" target="_blank">Visit Repository</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Image to PDF Converter. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            // Form submission handling
+            console.log('Contact form submitted');
+        });
+    </script>
+</body>
+</html>
