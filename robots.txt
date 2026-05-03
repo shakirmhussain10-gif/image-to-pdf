@@ -14,4 +14,4 @@ User-agent: Bingbot
 Allow: /
 
 # Sitemap
-Sitemap: https://mh3210152-web.github.io/image-to-pdf-/sitemap.xml
+Sitemap: https://image-to-pdf-black.vercel.app/sitemap.xml
